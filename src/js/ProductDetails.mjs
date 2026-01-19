@@ -32,32 +32,41 @@ export default class ProductDetails {
 }
 
 function productDetailsTemplate(product) {
-  const priceEl = document.getElementById("productPrice");
+  const section = document.querySelector(".product-detail");
 
-  if (product.FinalPrice < product.SuggestedRetailPrice) {
+  const finalPrice = Number(product.FinalPrice);
+  const retailPrice = Number(product.SuggestedRetailPrice);
+
+  let priceHTML = `<span class="final-price">$${finalPrice.toFixed(2)}</span>`;
+
+  if (retailPrice && retailPrice > finalPrice) {
     const discountPercent = Math.round(
-      ((product.SuggestedRetailPrice - product.FinalPrice) /
-        product.SuggestedRetailPrice) *
-        100
+      ((retailPrice - finalPrice) / retailPrice) * 100
     );
 
-    priceEl.innerHTML = `
-      <span class="final-price">$${product.FinalPrice}</span>
-      <span class="original-price">$${product.SuggestedRetailPrice}</span>
+    priceHTML += `
+      <span class="original-price">$${retailPrice.toFixed(2)}</span>
       <span class="discount-badge">Save ${discountPercent}%</span>
     `;
-  } else {
-    priceEl.textContent = `$${product.FinalPrice}`;
   }
-  document.querySelector("h3").textContent = product.NameWithoutBrand;
 
-  const productImage = document.getElementById("productImage");
-  productImage.src = product.Image;
-  productImage.alt = product.NameWithoutBrand;
+  section.innerHTML = `
+    <h2>${product.Brand.Name}</h2>
+    <h3>${product.NameWithoutBrand}</h3>
 
-  document.getElementById("productPrice").textContent = product.FinalPrice;
-  document.getElementById("productColor").textContent = product.Colors[0].ColorName;
-  document.getElementById("productDesc").innerHTML = product.DescriptionHtmlSimple;
+    <img
+      id="productImage"
+      src="${product.Image}"
+      alt="${product.NameWithoutBrand}"
+    />
 
-  document.getElementById("addToCart").dataset.id = product.Id;
+    <p id="productPrice">${priceHTML}</p>
+    <p><strong>Color:</strong> <span id="productColor">${product.Colors[0].ColorName}</span></p>
+
+    <p id="productDesc">${product.DescriptionHtmlSimple}</p>
+
+    <button id="addToCart" data-id="${product.Id}">
+      Add to Cart
+    </button>
+  `;
 }
