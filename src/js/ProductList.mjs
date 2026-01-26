@@ -2,12 +2,28 @@ import { renderListWithTemplate } from "./utils.mjs";
 
 // Template function for product cards
 function productCardTemplate(product) {
+  const finalPrice = Number(product.FinalPrice);
+  const retailPrice = Number(product.SuggestedRetailPrice);
+
+  let priceHTML = `<span class="final-price">$${finalPrice.toFixed(2)}</span>`;
+
+  if (retailPrice && retailPrice > finalPrice) {
+    const discountPercent = Math.round(
+      ((retailPrice - finalPrice) / retailPrice) * 100
+    );
+
+    priceHTML += `
+      <span class="original-price">$${retailPrice.toFixed(2)}</span>
+      <span class="discount-badge">Save ${discountPercent}%</span>
+    `;
+  }
+
   return `<li class="product-card">
     <a href="product_pages/?product=${product.Id}">
       <img src="${product.Image}" alt="Image of ${product.Name}">
       <h2 class="card__brand">${product.Brand.Name}</h2>
       <h3 class="card__name">${product.NameWithoutBrand}</h3>
-      <p class="product-card__price">$${product.FinalPrice}</p>
+      <p class="product-card__price">${priceHTML}</p>
     </a>
   </li>`;
 }
