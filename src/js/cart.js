@@ -26,5 +26,23 @@ function cartItemTemplate(item) {
  
   return newItem;
 }
+
  
 renderCartContents();
+
+
+function calculateCartTotal(cartItems) {
+  return cartItems.reduce((sum, item) => {
+    return sum + item.FinalPrice;
+  }, 0);
+}
+
+function renderCartTotal() {
+  const cartItems = getLocalStorage("so-cart") || [];
+  const total = calculateCartTotal(cartItems);
+
+  const totalElement = document.querySelector("#cart-total");
+  totalElement.textContent = total.toFixed(2);
+}
+
+renderCartTotal();
